@@ -30,7 +30,8 @@ function publicView(out: AskResult) {
   // 「見つからない」で遠い FAQ を並べると、関係のない話（ラーメン→食品廃棄物など）が出るので出さない
   const candidates = mode === "refuse" && !((out.top_scores[0] ?? 0) >= RELATED_SCORE) ? [] : out.candidates;
   if (mode === "answer") return { mode, candidates, faq, quotes: out.quotes, summary: out.summary };
-  return mode === "refuse" && out.contact ? { mode, candidates, faq, contact: out.contact } : { mode, candidates, faq };
+  if (mode === "refuse") return { mode, candidates, faq, ...(out.contact ? { contact: out.contact } : {}), ...(out.kind ? { kind: out.kind } : {}) };
+  return { mode, candidates, faq };
 }
 
 const unavailable = (q: string, reason: string): AskResult => ({ question: q, top_ids: [], top_scores: [], candidates: [], mode: "unavailable", reason, neurons: 0 });

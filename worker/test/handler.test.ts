@@ -35,13 +35,13 @@ class FakeD1 {
 }
 
 type Match = { id: string; score: number };
-function setup(opts: { gen?: unknown; ver?: unknown; aiError?: boolean; vars?: Record<string, string>; matches?: Match[]; pick?: string } = {}) {
+function setup(opts: { gen?: unknown; ver?: unknown; aiError?: boolean; vars?: Record<string, string>; matches?: Match[]; pick?: string; kind?: string } = {}) {
   const DB = new FakeD1();
   const calls: string[] = [];
   const AI = {
     async run(model: string, input: any) {
       calls.push(model);
-      if (String(input?.messages?.[0]?.content).startsWith("あなたは案内係")) return { response: JSON.stringify({ contact_id: opts.pick ?? "" }), usage: { prompt_tokens: 300, completion_tokens: 10 } };
+      if (String(input?.messages?.[0]?.content).startsWith("あなたは案内係")) return { response: JSON.stringify({ kind: opts.kind ?? "national", contact_id: opts.pick ?? "" }), usage: { prompt_tokens: 300, completion_tokens: 10 } };
       if (opts.aiError) throw new Error("secret-internal-detail");
       if (model.includes("bge-m3")) return { data: [[0.1, 0.2]] };
       const out = model.includes("llama-4-scout") ? (opts.ver ?? { ok: true, reason: "" }) : (opts.gen ?? GOOD);
@@ -240,7 +240,7 @@ test("見つからないときは、近い窓口の案内を出す（類似度�
   // 類似度が低い窓口は候補にしない（モデルも呼ばない）
   const far = setup({ gen: no, matches: [{ id: "B-1", score: 0.66 }, { id: "Q-11", score: 0.45 }], pick: "Q-11" });
   assert.ok(!("contact" in (await far.post({ q: "パスポートをとりたい" })).body));
-  assert.equal(far.calls.length, 2); // 埋め込み＋生成だけ
+  assert.equal(far.calls.length, 3); // 埋め込み＋生成＋種類の判定（窓口の候補は渡さない）
   // 答えられたときは出さない
   const ok = setup({ matches: [{ id: "A-1", score: 0.81 }, { id: "Q-11", score: 0.7 }] });
   assert.ok(!("contact" in (await ok.post({ q: "出生届はいつまで？" })).body));
@@ -252,4 +252,16 @@ test("リンクだけの FAQ を選んだら、要約を作らず原文とリン
   assert.equal(r.body.mode, "faq_only");
   assert.equal(r.body.faq.id, "B-1");
   assert.ok(!t.calls.some((c) => c.includes("llama-4-scout"))); // 検証も呼ばない
+});
+
+test("見つからないときは質問の種類を返し、記録にも残す（変な値は unknown）", async () => {
+  const no = { answerable: false, faq_id: "", quotes: [], summary: "" };
+  const t = setup({ gen: no, kind: "local" });
+  const r = await t.post({ q: "粗大ごみの出し方" });
+  assert.equal(r.body.mode, "refuse");
+  assert.equal(r.body.kind, "local");
+  assert.equal(JSON.parse(t.DB.rows()[0].detail).kind, "local");
+  assert.equal((await setup({ gen: no, kind: "<script>" }).post({ q: "x" })).body.kind, "unknown");
+  // 答えられたときは種類を出さない
+  assert.ok(!("kind" in (await setup().post({ q: "出生届はいつまで？" })).body));
 });
