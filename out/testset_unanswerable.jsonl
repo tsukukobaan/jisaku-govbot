@@ -1,0 +1,60 @@
+{"qid": "U001", "type": "unanswerable", "subtype": "boundary", "user_question": "確定申告の締め切りって、ふつうはいつまでなの？", "nearest_ids": ["E-a-9", "E-a-12", "E-a-20"], "why_not": "確定申告一般の提出期限を述べたFAQはなく、期限は譲渡所得（E-a-20）に限った記述のみ。"}
+{"qid": "U002", "type": "unanswerable", "subtype": "out_of_scope", "user_question": "自動車税っていつまでに払えばいいんですか？", "nearest_ids": ["E-g-2", "NP-B-a-170"], "why_not": "自動車税は固定資産税やOSSの説明で名前が出るだけで、納期限のFAQはない。"}
+{"qid": "U003", "type": "unanswerable", "subtype": "out_of_scope", "user_question": "粗大ごみってどうやって出せばいいの？", "nearest_ids": ["B-c-121"], "why_not": "粗大ごみはぴったりサービスの対象例として名前が出るだけで、出し方の説明はない。"}
+{"qid": "U004", "type": "unanswerable", "subtype": "out_of_scope", "user_question": "犬を飼い始めたんだけど、登録とか狂犬病の注射ってどこでやればいい？", "nearest_ids": ["NP-D-a-120"], "why_not": "犬の登録・狂犬病予防注射に関するFAQはない。"}
+{"qid": "U005", "type": "unanswerable", "subtype": "out_of_scope", "user_question": "新幹線の切符を払い戻したいんだけど、手数料っていくらかかる？", "nearest_ids": [], "why_not": "鉄道の切符・払い戻しに関するFAQはない。"}
+{"qid": "U006", "type": "unanswerable", "subtype": "out_of_scope", "user_question": "電車が遅れたときの遅延証明書ってどこでもらえるの？", "nearest_ids": [], "why_not": "遅延証明書に関するFAQはない。"}
+{"qid": "U007", "type": "unanswerable", "subtype": "out_of_scope", "user_question": "スマホを解約したいんだけど、違約金ってかかる？", "nearest_ids": [], "why_not": "携帯電話の解約・違約金に関するFAQはない。"}
+{"qid": "U008", "type": "unanswerable", "subtype": "out_of_scope", "user_question": "うちの電気代、来月からいくらになるの？", "nearest_ids": ["W-75"], "why_not": "電気料金の額を示すFAQはなく、電力・ガスの契約トラブル相談窓口があるだけ。"}
+{"qid": "U009", "type": "unanswerable", "subtype": "out_of_scope", "user_question": "期日前投票ってどこでできる？何を持っていけばいい？", "nearest_ids": ["NP-D-a-071"], "why_not": "期日前投票の場所・持ち物に関するFAQはなく、選挙関連は選挙活動の違法性の問合せ先のみ。"}
+{"qid": "U010", "type": "unanswerable", "subtype": "out_of_scope", "user_question": "燃えるゴミとプラスチックの分別ってどうなってる？", "nearest_ids": [], "why_not": "家庭ごみの分別に関するFAQはない。"}
+{"qid": "U011", "type": "unanswerable", "subtype": "out_of_scope", "user_question": "近所の公園でバーベキューしてもいいの？", "nearest_ids": [], "why_not": "公園の利用ルールに関するFAQはない。"}
+{"qid": "U012", "type": "unanswerable", "subtype": "out_of_scope", "user_question": "明日の天気ってどうなりそう？", "nearest_ids": [], "why_not": "天気予報を扱うFAQはない。"}
+{"qid": "U013", "type": "unanswerable", "subtype": "out_of_scope", "user_question": "献血ってどこでできるの？年齢制限とかある？", "nearest_ids": [], "why_not": "献血に関するFAQはない。"}
+{"qid": "U014", "type": "unanswerable", "subtype": "out_of_scope", "user_question": "家の前の道路に大きな穴が空いてるんだけど、どこに連絡すればいい？", "nearest_ids": [], "why_not": "道路の損傷の通報先を示すFAQはない。"}
+{"qid": "U015", "type": "unanswerable", "subtype": "out_of_scope", "user_question": "宝くじが当たったら、どこで換金すればいいの？", "nearest_ids": ["MC-D-0304"], "why_not": "宝くじの換金方法のFAQはなく、社会生活基本調査の収入記入の扱いが出るだけ。"}
+{"qid": "U016", "type": "unanswerable", "subtype": "out_of_scope", "user_question": "引っ越すから郵便物を新しい住所に転送してほしいんだけど、どうすればいい？", "nearest_ids": [], "why_not": "郵便物の転送届に関するFAQはない。"}
+{"qid": "U017", "type": "unanswerable", "subtype": "out_of_scope", "user_question": "成人式っていつ、どこでやるの？", "nearest_ids": [], "why_not": "成人式に関するFAQはない。"}
+{"qid": "U018", "type": "unanswerable", "subtype": "out_of_scope", "user_question": "実家が空き家になってるんだけど、空き家バンクに登録するにはどうしたらいい？", "nearest_ids": [], "why_not": "空き家バンクに関するFAQはない。"}
+{"qid": "U019", "type": "unanswerable", "subtype": "out_of_scope", "user_question": "引っ越し先で水道を使い始めるにはどこに連絡すればいいの？", "nearest_ids": [], "why_not": "水道の使用開始手続に関するFAQはない。"}
+{"qid": "U020", "type": "unanswerable", "subtype": "out_of_scope", "user_question": "隣の家の犬の鳴き声がうるさいんだけど、どこに苦情を言えばいい？", "nearest_ids": [], "why_not": "近隣の騒音・動物の鳴き声の苦情先を示すFAQはない。"}
+{"qid": "U021", "type": "unanswerable", "subtype": "out_of_scope", "user_question": "高速道路のETC割引って、何時なら安くなるの？", "nearest_ids": ["NP-B-a-183"], "why_not": "ETC割引に関するFAQはなく、高速道路は警察の管轄説明のみ。"}
+{"qid": "U022", "type": "unanswerable", "subtype": "out_of_scope", "user_question": "国立の美術館って無料で入れる日あるの？", "nearest_ids": [], "why_not": "美術館の観覧料・無料日に関するFAQはない。"}
+{"qid": "U023", "type": "unanswerable", "subtype": "out_of_scope", "user_question": "古い冷蔵庫を捨てたいんだけど、どうすればいい？", "nearest_ids": [], "why_not": "家電リサイクル・家電の処分に関するFAQはない。"}
+{"qid": "U024", "type": "unanswerable", "subtype": "out_of_scope", "user_question": "町内会って絶対に入らないといけないの？", "nearest_ids": [], "why_not": "町内会・自治会に関するFAQはない。"}
+{"qid": "U025", "type": "unanswerable", "subtype": "out_of_scope", "user_question": "市民プールって何時から何時まで開いてる？", "nearest_ids": [], "why_not": "公共施設（プール）の営業時間に関するFAQはない。"}
+{"qid": "U026", "type": "unanswerable", "subtype": "out_of_scope", "user_question": "火葬場の予約ってどうやってするの？", "nearest_ids": ["C-a-24", "C-d-8"], "why_not": "火葬場の予約方法のFAQはなく、関連は葬祭費の支給のみ。"}
+{"qid": "U027", "type": "unanswerable", "subtype": "out_of_scope", "user_question": "市のがん検診の無料クーポンってどうやってもらうの？", "nearest_ids": [], "why_not": "がん検診に関するFAQはない。"}
+{"qid": "U028", "type": "unanswerable", "subtype": "out_of_scope", "user_question": "小学校の給食費とか学用品の就学援助ってどうやって申し込むの？", "nearest_ids": ["A-b-95", "A-b-16"], "why_not": "就学援助制度のFAQはなく、ひとり親向け貸付金や児童手当からの給食費徴収の説明のみ。"}
+{"qid": "U029", "type": "unanswerable", "subtype": "out_of_scope", "user_question": "宅配便の再配達ってどうやって頼めばいい？", "nearest_ids": [], "why_not": "宅配便の再配達に関するFAQはない。"}
+{"qid": "U030", "type": "unanswerable", "subtype": "out_of_scope", "user_question": "年賀はがきっていつから売ってるの？", "nearest_ids": [], "why_not": "年賀はがきに関するFAQはない。"}
+{"qid": "U031", "type": "unanswerable", "subtype": "out_of_scope", "user_question": "図書館で借りた本の返却期限っていつまで？", "nearest_ids": ["W-15"], "why_not": "公立図書館の貸出ルールのFAQはなく、アジア経済研究所図書館の資料相談窓口のみ。"}
+{"qid": "U032", "type": "unanswerable", "subtype": "out_of_scope", "user_question": "家の庭で手持ち花火をしてもいいの？", "nearest_ids": [], "why_not": "花火に関するFAQはない。"}
+{"qid": "U033", "type": "unanswerable", "subtype": "out_of_scope", "user_question": "70歳になったらバスが安くなる敬老パスってもらえる？", "nearest_ids": [], "why_not": "敬老パス・高齢者の交通割引に関するFAQはない。"}
+{"qid": "U034", "type": "unanswerable", "subtype": "out_of_scope", "user_question": "うちの市役所って土曜日も開いてる？", "nearest_ids": [], "why_not": "個別の市役所の開庁日・時間に関するFAQはない。"}
+{"qid": "U035", "type": "unanswerable", "subtype": "boundary", "user_question": "会社を辞めたんだけど、失業保険っていつからもらえるの？", "nearest_ids": ["A-a-53", "C-a-22", "U-3"], "why_not": "基本手当は不妊治療中の受給延長や国保軽減の文脈で触れるだけで、受給開始時期は答えていない。"}
+{"qid": "U036", "type": "unanswerable", "subtype": "boundary", "user_question": "生活保護を申請したいんだけど、どこでどうやって手続きすればいい？", "nearest_ids": ["B-e-22", "C-a-3", "D-c-01"], "why_not": "生活保護は医療券や国保・年金免除の文脈で出るだけで、申請方法のFAQはない。"}
+{"qid": "U037", "type": "unanswerable", "subtype": "boundary", "user_question": "NHKの受信料って免除してもらえる？", "nearest_ids": ["Z-5"], "why_not": "NHK受信料は飛行場周辺の補助制度の問合せ先のみで、免除の条件は答えていない。"}
+{"qid": "U038", "type": "unanswerable", "subtype": "boundary", "user_question": "婚姻届を出すときって何が必要？", "nearest_ids": ["MJ-G-b-1", "MJ-G-b-2"], "why_not": "婚姻届の届出先・郵送可否はあるが、必要書類は法務省サイトと市区町村に委ねている。"}
+{"qid": "U039", "type": "unanswerable", "subtype": "boundary", "user_question": "国民健康保険料って、うちの場合だと月いくらになるの？", "nearest_ids": ["C-a-17", "C-a-22"], "why_not": "保険料の算定区分の説明はあるが、具体的な金額は市町村窓口に委ねている。"}
+{"qid": "U040", "type": "unanswerable", "subtype": "boundary", "user_question": "病気で会社を休んでるんだけど、傷病手当金ってどうやって申請するの？", "nearest_ids": ["I-a-12", "I-a-13"], "why_not": "傷病手当金は社会保険加入のメリットとして名前が出るだけで、申請方法はない。"}
+{"qid": "U041", "type": "unanswerable", "subtype": "boundary", "user_question": "市営住宅に入りたいんだけど、どうやって申し込めばいい？", "nearest_ids": ["M-c-12"], "why_not": "公営住宅は被災者の入居に関するFAQのみで、一般の申込方法は答えていない。"}
+{"qid": "U042", "type": "unanswerable", "subtype": "boundary", "user_question": "個人事業主として開業届を出したいんだけど、どこに出せばいい？", "nearest_ids": ["SM-A-b-9", "E-a-1"], "why_not": "起業の相談窓口はあるが、開業届の提出先・方法のFAQはない。"}
+{"qid": "U043", "type": "unanswerable", "subtype": "boundary", "user_question": "うちの市の児童手当って、何日に振り込まれるの？", "nearest_ids": ["A-b-13"], "why_not": "支給月は示すが、支給日は市区町村により異なるとして具体日は答えていない。"}
+{"qid": "U044", "type": "unanswerable", "subtype": "boundary", "user_question": "元夫が養育費を払ってくれないんだけど、どうすれば払わせられる？", "nearest_ids": ["A-e-5"], "why_not": "養育費は相談窓口の業務内容として触れるだけで、請求・強制の方法は答えていない。"}
+{"qid": "U045", "type": "unanswerable", "subtype": "boundary", "user_question": "今年の共通テストって何月何日にあるの？", "nearest_ids": ["T-11"], "why_not": "大学入試センターの問合せ電話はあるが、試験日程は載っていない。"}
+{"qid": "U046", "type": "unanswerable", "subtype": "boundary", "user_question": "奨学金の返済がきついんだけど、減額とかしてもらえる？", "nearest_ids": ["T-12", "T-24"], "why_not": "日本学生支援機構の相談窓口の案内のみで、減額制度の中身は答えていない。"}
+{"qid": "U047", "type": "unanswerable", "subtype": "boundary", "user_question": "コンビニで住民票を取ると手数料いくら？", "nearest_ids": ["B-b-52"], "why_not": "コンビニ交付で取れる証明書の種類はあるが、手数料は書かれていない。"}
+{"qid": "U048", "type": "unanswerable", "subtype": "boundary", "user_question": "印鑑登録ってどうやってするの？何を持っていけばいい？", "nearest_ids": ["B-b-52", "MJ-F-a-62"], "why_not": "印鑑登録証明書の取得や登記での用途はあるが、印鑑登録の手続はない。"}
+{"qid": "U049", "type": "unanswerable", "subtype": "boundary", "user_question": "パスポートを新しく作るのに手数料っていくらかかる？", "nearest_ids": ["Q-11", "B-c-116"], "why_not": "パスポートの申請窓口・マイナポータル申請の案内はあるが、手数料額はない。"}
+{"qid": "U050", "type": "unanswerable", "subtype": "boundary", "user_question": "大人のインフルエンザの予防接種って補助出るの？いくら？", "nearest_ids": ["A-d-9", "U-25"], "why_not": "予防接種のFAQはこどもの定期接種に関するもので、大人のインフルエンザ接種の費用・補助は答えていない。"}
+{"qid": "U051", "type": "unanswerable", "subtype": "boundary", "user_question": "国保の人が亡くなったときの葬祭費って何万円もらえるの？", "nearest_ids": ["C-a-24", "C-d-8"], "why_not": "葬祭費の支給はあるとするが、金額は市町村窓口に委ねている。"}
+{"qid": "U052", "type": "unanswerable", "subtype": "boundary", "user_question": "65歳で年金暮らしなんだけど、介護保険料って月いくらになる？", "nearest_ids": ["L-b-3", "L-b-1", "D-d-38"], "why_not": "算定の考え方は示すが、具体的な金額は市町村が決めるとして答えていない。"}
+{"qid": "U053", "type": "unanswerable", "subtype": "boundary", "user_question": "私の年金って、65歳からいくらもらえるの？", "nearest_ids": ["D-d-10"], "why_not": "見込額の確認方法（ねんきんネット・年金事務所）はあるが、金額そのものは答えられない。"}
+{"qid": "U054", "type": "unanswerable", "subtype": "boundary", "user_question": "子どもの医療費の助成って何歳までなの？", "nearest_ids": ["A-b-48"], "why_not": "対象年齢は市区町村ごとに異なるとして、具体的な年齢は答えていない。"}
+{"qid": "U055", "type": "unanswerable", "subtype": "boundary", "user_question": "東京の最低賃金って今いくら？", "nearest_ids": ["I-a-80", "D-b-40"], "why_not": "最低賃金は助成金の要件の文脈で出るだけで、地域別の金額はない。"}
+{"qid": "U056", "type": "unanswerable", "subtype": "boundary", "user_question": "宝くじで100万円当たったら税金かかるの？", "nearest_ids": ["MC-D-0304", "E-a-2"], "why_not": "宝くじの当選金の課税関係を答えたFAQはなく、統計調査の記入方法と所得の種類の列挙のみ。"}
+{"qid": "U057", "type": "unanswerable", "subtype": "boundary", "user_question": "国家公務員試験って、いつ申し込んでいつ試験があるの？", "nearest_ids": ["NP-M-a-035"], "why_not": "警察庁の採用説明で国家公務員試験に触れるだけで、日程は答えていない。"}
+{"qid": "U058", "type": "unanswerable", "subtype": "boundary", "user_question": "車検っていくらくらいかかるの？", "nearest_ids": ["X-23", "X-13", "NP-B-a-170"], "why_not": "自動車検査登録のポータル・ヘルプデスクの案内のみで、費用は答えていない。"}
+{"qid": "U059", "type": "unanswerable", "subtype": "boundary", "user_question": "バイトを半年続けたら、有給って何日もらえるの？", "nearest_ids": ["MC-D-0211", "MC-D-0213"], "why_not": "社会生活基本調査の用語説明で年次有給休暇の定義は出るが、付与日数は答えていない。"}
+{"qid": "U060", "type": "unanswerable", "subtype": "boundary", "user_question": "高校の授業料無償化って、親の年収いくらまでなら対象？", "nearest_ids": ["T-22"], "why_not": "就学支援金のオンライン申請システムの問合せ先のみで、所得要件は答えていない。"}

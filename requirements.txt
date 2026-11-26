@@ -1,0 +1,4 @@
+# scripts/*.py 用（python -m venv .venv のあと pip install -r requirements.txt）
+numpy
+scikit-learn
+openpyxl

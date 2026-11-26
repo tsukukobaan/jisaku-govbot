@@ -1,0 +1,15 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "jisaku-govbot",
+  "main": "src/index.ts",
+  "assets": { "directory": "./public", "run_worker_first": ["/api/*"] },
+  "compatibility_date": "2026-11-01",
+  "ai": { "binding": "AI", "remote": true },
+  "vectorize": [{ "binding": "VECTORIZE", "index_name": "faq-bge-m3", "remote": true }],
+  "d1_databases": [
+    { "binding": "DB", "database_name": "faq-db", "database_id": "4ba54f60-561d-4bd8-8fa6-bfde193861b3", "migrations_dir": "migrations", "remote": true }
+  ],
+  // 1日の上限。Workers Paid にしたら上げる（docs/design.md）。LOCAL_EVAL は公開側では "0"、手元は .dev.vars で "1"
+  "vars": { "DAILY_NEURONS": "8500", "DAILY_ASKS": "700", "LOCAL_EVAL": "0" },
+  "observability": { "enabled": true }
+}

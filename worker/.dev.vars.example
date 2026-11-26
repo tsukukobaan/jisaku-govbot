@@ -1,0 +1,2 @@
+# 手元の計測だけで使う（/embed とモデルの差し替えを開く）。cp .dev.vars.example .dev.vars
+LOCAL_EVAL=1

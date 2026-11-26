@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+.venv/
+node_modules/
+.wrangler/
+
+# 秘密・個人の設定
+.env
+.env.*
+.dev.vars
+*.local.md
+
+# 大きい生成物（scripts/embed.py などで作り直せる）
+out/emb_*
