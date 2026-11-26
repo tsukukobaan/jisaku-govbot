@@ -70,3 +70,7 @@ header h1 { max-width: 720px; margin: 0 auto; font-size: 20px; }
 header h1 { display: flex; align-items: center; gap: 8px; }
 header h1 img { width: 32px; height: 32px; border-radius: 50%; }
 .rel-head { margin: 12px 0 0; }
+
+/* 今日の AI 利用の割合（下に小さく。尽きたら赤） */
+.usage { color: #949497; }
+.usage.out { color: #ec0000; font-weight: 700; }

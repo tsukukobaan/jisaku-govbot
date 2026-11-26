@@ -213,3 +213,10 @@ test("上限の8割・10割に来たら LINE に1日1回ずつ知らせる（Sec
     globalThis.fetch = realFetch;
   }
 });
+
+test("/api/status は今日の使用率だけを返す", async () => {
+  const t = setup({ vars: { DAILY_NEURONS: "1000" } });
+  t.DB.db.prepare("INSERT INTO ask_log (question, top_ids, top_scores, mode, neurons) VALUES ('x','[]','[]','answer',250)").run();
+  const r = await worker.fetch(new Request("https://bot.example/api/status"), t.env, t.ctx);
+  assert.deepEqual(await r.json(), { used: 0.25 });
+});

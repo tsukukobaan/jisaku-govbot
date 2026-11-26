@@ -77,6 +77,14 @@ async function handleAsk(req: Request, env: Env, ctx: ExecutionContext, url: URL
   return json(local ? out : publicView(out));
 }
 
+/** 今日（UTC）の使用率。画面の下に小さく出す（数そのものは出さず、割合だけ）。 */
+async function handleStatus(env: Env): Promise<Response> {
+  const limit = dailyLimits(env);
+  const r = await env.DB.prepare("SELECT coalesce(sum(neurons),0) s, count(*) n FROM ask_log WHERE at >= date('now')").first<{ s: number; n: number }>();
+  const used = Math.max((r?.s ?? 0) / limit.neurons, (r?.n ?? 0) / limit.asks);
+  return Response.json({ used: Math.min(1, Math.round(used * 100) / 100) }, { headers: { "cache-control": "public, max-age=30", "x-content-type-options": "nosniff" } });
+}
+
 export default {
   async fetch(req: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(req.url);
@@ -87,6 +95,7 @@ export default {
         const r: any = await env.AI.run(EMBED, { text });
         return json({ shape: r.shape, data: r.data });
       }
+      if (url.pathname === "/api/status" && req.method === "GET") return await handleStatus(env);
       if (url.pathname === "/api/ask") {
         if (req.method !== "POST") return fail(405, "POST で送ってください");
         return await handleAsk(req, env, ctx, url, local);

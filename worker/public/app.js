@@ -73,8 +73,23 @@ async function run() {
   } catch (e) {
     bot.innerHTML = `<p>通信がうまくいきませんでした。もう一度お試しください。</p>`;
   } finally {
+    usage();
     $("#go").disabled = false;
     bot.scrollIntoView({ behavior: "smooth", block: "start" });
     $("#q").focus();
   }
 }
+
+// 今日の AI 利用の割合を下に出す。尽きたら赤字（そのあいだは検索だけ）
+async function usage() {
+  try {
+    const r = await fetch("/api/status");
+    if (!r.ok) return;
+    const { used } = await r.json();
+    const el = $("#usage");
+    el.hidden = false;
+    el.classList.toggle("out", used >= 1);
+    el.textContent = used >= 1 ? "今日の AI 上限に達しました（検索のみ・朝9時に戻ります）" : `今日の AI 利用：上限の ${Math.round(used * 100)}%`;
+  } catch {}
+}
+usage();
