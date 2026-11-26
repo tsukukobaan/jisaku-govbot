@@ -5,6 +5,7 @@ export const DEFAULT_GEN = "@cf/google/gemma-4-26b-a4b-it";
 export const DEFAULT_VER = "@cf/meta/llama-4-scout-17b-16e-instruct"; // 生成と別のモデルで検証する
 export const TOP_K = 5;
 export const MIN_SCORE = 0.5; // これ未満は FAQ にないとみなし、モデルを呼ばない
+export const RELATED_SCORE = 0.62; // 「見つからない」ときに近い FAQ を出すのは、1位の類似度がこれ以上のときだけ（遠いものを並べない）
 
 // 1日の上限は wrangler.jsonc の vars（DAILY_NEURONS・DAILY_ASKS）で変える。下は vars が無いときの値（無料枠を守る）
 export const DAILY_NEURONS = 8500; // 1日（UTC）の生成の上限。超えたら検索だけ（無料枠 10,000 を守る）

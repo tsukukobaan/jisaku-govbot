@@ -7,7 +7,7 @@
 // Env は wrangler types が worker-configuration.d.ts に生成する（LOCAL_EVAL・IP_SALT は env.d.ts）。
 
 import { getCached, putCached } from "./cache.ts";
-import { DEFAULT_GEN, DEFAULT_VER, EMBED, MAX_QUESTION, PER_IP_HOUR, dailyLimits } from "./config.ts";
+import { DEFAULT_GEN, DEFAULT_VER, EMBED, MAX_QUESTION, PER_IP_HOUR, RELATED_SCORE, dailyLimits } from "./config.ts";
 import { ipHash, readJson, record, release, reserve } from "./limits.ts";
 import { notifyLimits } from "./notify.ts";
 import { ask, type AskResult } from "./pipeline.ts";
@@ -26,7 +26,9 @@ function isLocalEval(url: URL, env: Env): boolean {
 
 /** 公開の応答。画面が使うものだけ返す：内部の理由・類似度・neurons・検証に落ちた要約は出さない。 */
 function publicView(out: AskResult) {
-  const { mode, candidates, faq } = out;
+  const { mode, faq } = out;
+  // 「見つからない」で遠い FAQ を並べると、関係のない話（ラーメン→食品廃棄物など）が出るので出さない
+  const candidates = mode === "refuse" && !((out.top_scores[0] ?? 0) >= RELATED_SCORE) ? [] : out.candidates;
   return mode === "answer" ? { mode, candidates, faq, quotes: out.quotes, summary: out.summary } : { mode, candidates, faq };
 }
 

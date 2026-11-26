@@ -41,8 +41,16 @@ function bubble(cls, html) {
 }
 function render(r, d) {
   if (!r.ok) return `<p>${esc(d.error || "うまくいきませんでした。")}</p>`;
-  if (d.mode === "answer")
-    return `<p class="summary">${esc(d.summary)}</p>` + (d.quotes || []).map((x) => `<blockquote>${esc(x)}</blockquote>`).join("") + source(d.faq);
+  if (d.mode === "answer") {
+    // 要約が引用とほぼ同じなら、同じ文を2回並べない（引用だけ出す）
+    const flat = (x) => String(x || "").replace(/[\s　。、]/g, "");
+    const quotes = d.quotes || [];
+    // 2文字ずつの重なり（Dice 係数）が 0.8 以上なら同じ文とみなす
+    const grams = (t) => { const a = flat(t); const m = new Map(); for (let i = 0; i < a.length - 1; i++) { const g = a.slice(i, i + 2); m.set(g, (m.get(g) || 0) + 1); } return [m, Math.max(a.length - 1, 1)]; };
+    const dice = (a, b) => { const [ma, na] = grams(a); const [mb, nb] = grams(b); let c = 0; for (const [g, k] of ma) c += Math.min(k, mb.get(g) || 0); return (2 * c) / (na + nb); };
+    const same = quotes.some((x) => flat(x).includes(flat(d.summary)) || dice(x, d.summary) >= 0.8);
+    return (same ? "" : `<p class="summary">${esc(d.summary)}</p>`) + quotes.map((x) => `<blockquote>${esc(x)}</blockquote>`).join("") + source(d.faq);
+  }
   if (d.mode === "faq_only" && d.faq)
     return `<span class="tag warn">FAQ の原文をそのまま表示</span><blockquote>${esc(d.faq.answer)}</blockquote>` + source(d.faq);
   if (d.mode === "search_only" || d.mode === "faq_only")

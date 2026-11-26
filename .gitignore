@@ -12,3 +12,4 @@ node_modules/
 
 # 大きい生成物（scripts/embed.py などで作り直せる）
 out/emb_*
+promo/
