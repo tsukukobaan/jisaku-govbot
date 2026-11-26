@@ -43,7 +43,7 @@ def load(p):
 
 
 faq = [(r["id"], r["embed_text"]) for r in load("faq_clean.jsonl") if r["id"] not in EXCLUDE]
-tests = [(r["qid"], r["user_question"]) for p in ("testset_answerable.jsonl", "testset_unanswerable.jsonl", "testset_adversarial.jsonl") for r in load(p)]
+tests = [(r["qid"], r["user_question"]) for p in ("testset_answerable.jsonl", "testset_unanswerable.jsonl", "testset_adversarial.jsonl", "testset_nta.jsonl") if (OUT / p).exists() for r in load(p)]
 run("test", tests)
 run("faq", faq)
 # 足した出典（scripts/build_nta.py など）。あれば別のファイルに作る（今ある索引に足すだけで済むように）

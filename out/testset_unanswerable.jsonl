@@ -1,4 +1,3 @@
-{"qid": "U001", "type": "unanswerable", "subtype": "boundary", "user_question": "確定申告の締め切りって、ふつうはいつまでなの？", "nearest_ids": ["E-a-9", "E-a-12", "E-a-20"], "why_not": "確定申告一般の提出期限を述べたFAQはなく、期限は譲渡所得（E-a-20）に限った記述のみ。"}
 {"qid": "U002", "type": "unanswerable", "subtype": "out_of_scope", "user_question": "自動車税っていつまでに払えばいいんですか？", "nearest_ids": ["E-g-2", "NP-B-a-170"], "why_not": "自動車税は固定資産税やOSSの説明で名前が出るだけで、納期限のFAQはない。"}
 {"qid": "U003", "type": "unanswerable", "subtype": "out_of_scope", "user_question": "粗大ごみってどうやって出せばいいの？", "nearest_ids": ["B-c-121"], "why_not": "粗大ごみはぴったりサービスの対象例として名前が出るだけで、出し方の説明はない。"}
 {"qid": "U004", "type": "unanswerable", "subtype": "out_of_scope", "user_question": "犬を飼い始めたんだけど、登録とか狂犬病の注射ってどこでやればいい？", "nearest_ids": ["NP-D-a-120"], "why_not": "犬の登録・狂犬病予防注射に関するFAQはない。"}
@@ -39,7 +38,6 @@
 {"qid": "U039", "type": "unanswerable", "subtype": "boundary", "user_question": "国民健康保険料って、うちの場合だと月いくらになるの？", "nearest_ids": ["C-a-17", "C-a-22"], "why_not": "保険料の算定区分の説明はあるが、具体的な金額は市町村窓口に委ねている。"}
 {"qid": "U040", "type": "unanswerable", "subtype": "boundary", "user_question": "病気で会社を休んでるんだけど、傷病手当金ってどうやって申請するの？", "nearest_ids": ["I-a-12", "I-a-13"], "why_not": "傷病手当金は社会保険加入のメリットとして名前が出るだけで、申請方法はない。"}
 {"qid": "U041", "type": "unanswerable", "subtype": "boundary", "user_question": "市営住宅に入りたいんだけど、どうやって申し込めばいい？", "nearest_ids": ["M-c-12"], "why_not": "公営住宅は被災者の入居に関するFAQのみで、一般の申込方法は答えていない。"}
-{"qid": "U042", "type": "unanswerable", "subtype": "boundary", "user_question": "個人事業主として開業届を出したいんだけど、どこに出せばいい？", "nearest_ids": ["SM-A-b-9", "E-a-1"], "why_not": "起業の相談窓口はあるが、開業届の提出先・方法のFAQはない。"}
 {"qid": "U043", "type": "unanswerable", "subtype": "boundary", "user_question": "うちの市の児童手当って、何日に振り込まれるの？", "nearest_ids": ["A-b-13"], "why_not": "支給月は示すが、支給日は市区町村により異なるとして具体日は答えていない。"}
 {"qid": "U044", "type": "unanswerable", "subtype": "boundary", "user_question": "元夫が養育費を払ってくれないんだけど、どうすれば払わせられる？", "nearest_ids": ["A-e-5"], "why_not": "養育費は相談窓口の業務内容として触れるだけで、請求・強制の方法は答えていない。"}
 {"qid": "U045", "type": "unanswerable", "subtype": "boundary", "user_question": "今年の共通テストって何月何日にあるの？", "nearest_ids": ["T-11"], "why_not": "大学入試センターの問合せ電話はあるが、試験日程は載っていない。"}

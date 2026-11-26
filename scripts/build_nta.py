@@ -14,7 +14,8 @@ SRC = ROOT / "raw" / "nta"
 OUT = ROOT / "out" / "faq_nta.jsonl"
 BASE = "https://www.nta.go.jp"
 AREA = "税（国税庁タックスアンサー）"
-SKIP = {"根拠法令等", "関連リンク", "関連コード", "お問い合わせ先", "対象税目", "QAリンク"}
+SKIP = {"根拠法令等", "関連リンク", "関連コード", "お問い合わせ先", "対象税目", "QAリンク",
+        "税の情報・手続・用紙", "サイトマップ（コンテンツ一覧）", "お問い合せ先", "根拠リンク"}  # 古い形のページのナビ
 SPLIT_H2 = 700  # これより長い h2 は h3 ごとに分ける
 MAX_CHUNK = 1200  # これより長い塊は段落の切れ目で分ける
 ERA = {"令和": 2018, "平成": 1988}
@@ -75,7 +76,9 @@ recs = []
 for f in sorted(SRC.glob("*.htm")):
     if f.name.startswith("_"):
         continue
-    t = f.read_bytes().decode("utf-8", "ignore")
+    b = f.read_bytes()
+    cs = re.search(rb"charset=[\"']?([\w-]+)", b[:2000])
+    t = b.decode("cp932" if cs and cs.group(1).lower() in (b"shift_jis", b"sjis", b"x-sjis") else "utf-8", "ignore")  # 古いページは Shift_JIS
     m = re.search(r"<h1>(.*?)</h1>", t, re.S)
     if not m:
         print("no h1", f.name); continue

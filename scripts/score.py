@@ -16,7 +16,7 @@ OUT = Path(__file__).resolve().parent.parent / "out"
 load = lambda p: [json.loads(l) for l in (OUT / p).read_text(encoding="utf-8").splitlines() if l.strip()]
 name = sys.argv[1]
 rows = load(f"answers_{name}.jsonl")
-tests = {r["qid"]: r for p in ("testset_answerable.jsonl", "testset_unanswerable.jsonl", "testset_adversarial.jsonl") for r in load(p)}
+tests = {r["qid"]: r for p in ("testset_answerable.jsonl", "testset_unanswerable.jsonl", "testset_adversarial.jsonl", "testset_nta.jsonl") if (OUT / p).exists() for r in load(p)}
 faq = {r["id"]: r for f in ("faq_clean.jsonl", "faq_nta.jsonl") if (OUT / f).exists() for r in load(f)}  # 足した出典も引く
 alias = {i: r["id"] for r in faq.values() for i in [r["id"]] + r["alias_ids"]}
 

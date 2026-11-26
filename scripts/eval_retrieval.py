@@ -24,7 +24,7 @@ T = np.load(OUT / "emb_test.npy"); T /= np.linalg.norm(T, axis=1, keepdims=True)
 tix = {q: i for i, q in enumerate(tid)}
 names = [{fid[i]} | set(faq[fid[i]]["alias_ids"]) for i in range(len(fid))]
 
-tests = {r["qid"]: r for p in ("testset_answerable.jsonl", "testset_unanswerable.jsonl", "testset_adversarial.jsonl") for r in load(p)}
+tests = {r["qid"]: r for p in ("testset_answerable.jsonl", "testset_unanswerable.jsonl", "testset_adversarial.jsonl", "testset_nta.jsonl") if (OUT / p).exists() for r in load(p)}
 ans = [r for r in tests.values() if r["type"] == "answerable"]
 
 dense = T @ F.T  # cos 類似度

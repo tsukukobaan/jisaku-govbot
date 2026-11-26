@@ -5,6 +5,8 @@
   pilot  = 回答可の試行30問（A のうち source=pilot）
   sample = pilot30 ＋ FAQにない10 ＋ 意地悪10
   all    = 300問
+  nta    = 国税庁タックスアンサーで答えられる問（out/testset_nta.jsonl）
+  all+nta = 両方
 neurons が --budget を超えたら止める（無料枠 1日 10,000 を守る）。結果は out/answers_<出力名>.jsonl
 """
 import argparse, json, sys, time, urllib.request
@@ -18,16 +20,17 @@ load = lambda p: [json.loads(l) for l in (OUT / p).read_text(encoding="utf-8").s
 ap = argparse.ArgumentParser()
 ap.add_argument("gen"); ap.add_argument("name")
 ap.add_argument("--ver", default=None)
-ap.add_argument("--set", default="sample", choices=["pilot", "sample", "all"])
+ap.add_argument("--set", default="sample", choices=["pilot", "sample", "all", "nta", "all+nta"])
 ap.add_argument("--budget", type=float, default=4000)
 ap.add_argument("--qids", default="", help="カンマ区切りの qid だけ流す")
 a = ap.parse_args()
 
 A = load("testset_answerable.jsonl"); U = load("testset_unanswerable.jsonl"); X = load("testset_adversarial.jsonl")
 pilot = [r for r in A if r["source"] == "pilot"]
-tests = {"pilot": pilot, "sample": pilot + U[::6] + X[::4], "all": A + U + X}[a.set]
+T = load("testset_nta.jsonl") if (OUT / "testset_nta.jsonl").exists() else []  # 国税庁タックスアンサーで答えられる問（#3）
+tests = {"pilot": pilot, "sample": pilot + U[::6] + X[::4], "all": A + U + X, "nta": T, "all+nta": A + U + X + T}[a.set]
 if a.qids:
-    want = a.qids.split(","); allt = {t["qid"]: t for t in A + U + X}; tests = [allt[q] for q in want]
+    want = a.qids.split(","); allt = {t["qid"]: t for t in A + U + X + T}; tests = [allt[q] for q in want]
 alias = {}
 for r in [x for f in ("faq_clean.jsonl", "faq_nta.jsonl") if (OUT / f).exists() for x in load(f)]:
     for i in [r["id"]] + r["alias_ids"]:
