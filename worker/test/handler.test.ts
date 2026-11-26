@@ -186,3 +186,30 @@ test("1日の上限は vars で上げられる", async () => {
   t.DB.db.prepare("INSERT INTO ask_log (question, top_ids, top_scores, mode, neurons) VALUES ('x','[]','[]','answer',?)").run(DAILY_NEURONS);
   assert.equal((await t.post({ q: "出生届はいつまで？" })).body.mode, "answer");
 });
+
+test("上限の8割・10割に来たら LINE に1日1回ずつ知らせる（Secret が無ければ何もしない）", async () => {
+  const sent: any[] = [];
+  const realFetch = globalThis.fetch;
+  globalThis.fetch = (async (url: string, init: any) => { sent.push({ url, body: JSON.parse(init.body) }); return new Response("{}"); }) as any;
+  try {
+    const t = setup({ vars: { LINE_CHANNEL_TOKEN: "tok", LINE_TO: "U123" } });
+    t.DB.db.prepare("INSERT INTO ask_log (question, top_ids, top_scores, mode, neurons) VALUES ('x','[]','[]','answer',?)").run(DAILY_NEURONS * 0.85);
+    await t.post({ q: "出生届はいつまで？" });
+    await t.post({ q: "出生届の期限" });
+    assert.equal(sent.length, 1);
+    assert.equal(sent[0].url, "https://api.line.me/v2/bot/message/push");
+    assert.equal(sent[0].body.to, "U123");
+    assert.match(sent[0].body.messages[0].text, /80%/);
+    t.DB.db.prepare("INSERT INTO ask_log (question, top_ids, top_scores, mode, neurons) VALUES ('x','[]','[]','answer',?)").run(DAILY_NEURONS * 0.2);
+    await t.post({ q: "出生届は何日以内" });
+    assert.equal(sent.length, 2);
+    assert.match(sent[1].body.messages[0].text, /100%/);
+
+    const u = setup(); // Secret なし
+    u.DB.db.prepare("INSERT INTO ask_log (question, top_ids, top_scores, mode, neurons) VALUES ('x','[]','[]','answer',?)").run(DAILY_NEURONS);
+    await u.post({ q: "出生届はいつまで？" });
+    assert.equal(sent.length, 2);
+  } finally {
+    globalThis.fetch = realFetch;
+  }
+});

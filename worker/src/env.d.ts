@@ -8,4 +8,8 @@ interface Env {
   DAILY_NEURONS?: string;
   /** 1日（UTC）に受ける質問数の上限（wrangler.jsonc の vars） */
   DAILY_ASKS?: string;
+  /** 上限の通知：LINE Messaging API のチャネルアクセストークン（Secret） */
+  LINE_CHANNEL_TOKEN?: string;
+  /** 上限の通知：受け取る人の LINE ユーザー ID（Secret） */
+  LINE_TO?: string;
 }

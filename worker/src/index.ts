@@ -9,6 +9,7 @@
 import { getCached, putCached } from "./cache.ts";
 import { DEFAULT_GEN, DEFAULT_VER, EMBED, MAX_QUESTION, PER_IP_HOUR, dailyLimits } from "./config.ts";
 import { ipHash, readJson, record, release, reserve } from "./limits.ts";
+import { notifyLimits } from "./notify.ts";
 import { ask, type AskResult } from "./pipeline.ts";
 
 const API_HEADERS = { "cache-control": "no-store", "x-content-type-options": "nosniff" };
@@ -53,6 +54,8 @@ async function handleAsk(req: Request, env: Env, ctx: ExecutionContext, url: URL
   }
 
   const limit = dailyLimits(env);
+  // 上限の 8 割・10 割に来たら LINE で知らせる（種類ごとに1日1回）
+  if (!local) ctx.waitUntil(notifyLimits(env, { neurons: slot.neuronsToday, asks: slot.asksToday }, limit).catch((e) => console.error(e)));
   const useCache = gen === DEFAULT_GEN && ver === DEFAULT_VER; // 手元でモデルを差し替えた計測は使い回さない
   let out: AskResult | null = useCache ? await getCached(env.DB, q) : null;
   if (out) {
