@@ -4,6 +4,8 @@ export const EMBED = "@cf/baai/bge-m3";
 export const DEFAULT_GEN = "@cf/google/gemma-4-26b-a4b-it";
 export const DEFAULT_VER = "@cf/meta/llama-4-scout-17b-16e-instruct"; // 生成と別のモデルで検証する
 export const TOP_K = 5;
+export const SKIP_VERIFY_OVERLAP = 0.85; // 要約と引用の重なりがこれ以上なら検証を省く（過去の誤答は最大 0.80）
+export const PIPELINE_VERSION = "2"; // 指示・照合を変えたら上げる（答えの使い回しを捨てる）
 export const MIN_SCORE = 0.5; // これ未満は FAQ にないとみなし、モデルを呼ばない
 export const RELATED_SCORE = 0.62; // 「見つからない」ときに近い FAQ を出すのは、1位の類似度がこれ以上のときだけ（遠いものを並べない）
 

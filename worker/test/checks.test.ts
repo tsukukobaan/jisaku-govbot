@@ -1,7 +1,7 @@
 // 実行：npm test（Node 22.6 以上。型は実行時に外すだけ）
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { checkQuotes, norm } from "../src/checks.ts";
+import { checkQuotes, droppedLimit, norm, overlap } from "../src/checks.ts";
 import { ipBucket } from "../src/limits.ts";
 
 const FAQ = "申請は、出生の日の翌日から15日以内に行ってください。\n手数料は１，０００円です（市区町村の窓口に限ります）。";
@@ -38,6 +38,27 @@ test("要約に URL らしいものがあれば落とす", () => {
   const q = ["手数料は１，０００円です"];
   for (const s of ["詳しくは https://example.go.jp を見てください。", "www.example.jp を見てください。", "soumu.go.jp にあります。"])
     assert.equal(checkQuotes(FAQ, q, s), "要約に URL");
+});
+
+test("引用にそのままある URL・メールは要約に書いてよい", () => {
+  const faq = "ドメイン（@myna.go.jp）が迷惑メールに指定されている可能性があります。";
+  assert.equal(checkQuotes(faq, [faq], "@myna.go.jp が迷惑メールに指定されているかもしれません。"), null);
+  assert.equal(checkQuotes(faq, [faq], "example.go.jp が迷惑メールに指定されているかもしれません。"), "要約に URL");
+});
+
+test("droppedLimit：引用の限定の語が要約から消えたら落とす", () => {
+  const q = ["マイナ免許証のみを保有する方が対象です。"];
+  assert.equal(droppedLimit(q, "住所変更の手続がワンストップでできます。"), "のみ");
+  assert.equal(droppedLimit(q, "マイナ免許証のみを持つ方は、ワンストップでできます。"), null);
+  assert.equal(droppedLimit(["土日を除き、受け付けます。"], "土日を除いて受け付けます。"), null); // 同じ組の別の形は通す
+  assert.equal(droppedLimit(["窓口に限ります。"], "窓口でできます。"), "限り");
+  assert.equal(droppedLimit(["申請できる場合があります。"], "申請できます。"), null); // 「場合」は見ない
+});
+
+test("overlap：引用をそのまま写した要約は 1、無関係なら 0 に近い", () => {
+  assert.equal(overlap("登録料の納付は郵送でもかまいません。", ["登録料の納付は郵送でもかまいません。"]), 1);
+  assert.ok(overlap("電子証明書の更新は可能です。", ["可能です。"]) < 0.5);
+  assert.equal(overlap("", ["何か"]), 0);
 });
 
 test("ipBucket：IPv4 はそのまま、IPv6 は /64 にまとめる", () => {

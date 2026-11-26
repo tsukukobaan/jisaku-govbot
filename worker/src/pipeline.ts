@@ -1,8 +1,8 @@
 // 回答の流れ：埋め込み検索 → 生成（JSON）→ コードで照合 → 別モデルで検証。
 // どこかで落ちたら、要約を出さずに FAQ の原文（faq_only）か「見つからない」（refuse）にする。
 
-import { checkQuotes } from "./checks.ts";
-import { DEFAULT_GEN, DEFAULT_VER, EMBED, MIN_SCORE, TOP_K, neurons, type Usage } from "./config.ts";
+import { checkQuotes, droppedLimit, overlap } from "./checks.ts";
+import { DEFAULT_GEN, DEFAULT_VER, EMBED, MIN_SCORE, SKIP_VERIFY_OVERLAP, TOP_K, neurons, type Usage } from "./config.ts";
 import { GEN_SCHEMA, GEN_SYSTEM, VER_SCHEMA, VER_SYSTEM } from "./prompts.ts";
 
 type FaqRow = { id: string; area: string; question: string; answer_plain: string; links: string; as_of: string };
@@ -92,6 +92,11 @@ export async function ask(env: Env, q: string, gen = DEFAULT_GEN, ver = DEFAULT_
   const picked = { faq: toPublic(faq), quotes, summary };
   const bad = checkQuotes(faq.answer_plain, quotes, summary);
   if (bad) return done("faq_only", { ...picked, reason: bad });
+  const lost = droppedLimit(quotes, summary);
+  if (lost) return done("faq_only", { ...picked, reason: `要約が条件を落とした：${lost}` });
+
+  // 要約が引用をほぼそのまま写しているなら、検証モデルは呼ばない（検証が日本語を読み違えて落とす方が多い。docs/design.md）
+  if (overlap(summary, quotes) >= SKIP_VERIFY_OVERLAP) return done("answer", picked);
 
   // 別モデルで検証：要約が FAQ と食い違わないか
   const v = await runJson(env, ver, VER_SYSTEM, `質問：${q}\n\nFAQ の問い：${faq.question}\nFAQ の回答：${faq.answer_plain}\n\n要約：${summary}`, VER_SCHEMA);

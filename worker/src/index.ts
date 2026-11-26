@@ -58,7 +58,7 @@ async function handleAsk(req: Request, env: Env, ctx: ExecutionContext, url: URL
   const limit = dailyLimits(env);
   // 上限の 8 割・10 割に来たら LINE で知らせる（種類ごとに1日1回）
   if (!local) ctx.waitUntil(notifyLimits(env, { neurons: slot.neuronsToday, asks: slot.asksToday }, limit).catch((e) => console.error(e)));
-  const useCache = gen === DEFAULT_GEN && ver === DEFAULT_VER; // 手元でモデルを差し替えた計測は使い回さない
+  const useCache = !local && gen === DEFAULT_GEN && ver === DEFAULT_VER; // 手元の計測は使い回さない（直しの効きを測るため）
   let out: AskResult | null = useCache ? await getCached(env.DB, q) : null;
   if (out) {
     // 使い回し：AI も検索も呼ばないので、1日の上限には数えない

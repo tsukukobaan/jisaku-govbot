@@ -1,12 +1,12 @@
 // 同じ質問の答えを使い回す。バズると画像や例の質問がそのまま何度も入るので、2回目からは AI を呼ばない。
 // FAQ の中身が変わらない限り答えも同じなので、CACHE_DAYS 日まで使う。
 
-import { CACHE_DAYS } from "./config.ts";
+import { CACHE_DAYS, PIPELINE_VERSION } from "./config.ts";
 import type { AskResult } from "./pipeline.ts";
 
 /** 全角・半角、空白、末尾の記号、大文字小文字の違いを同じ質問とみなす。 */
 export function cacheKey(q: string): string {
-  return q
+  return PIPELINE_VERSION + ":" + q
     .normalize("NFKC")
     .toLowerCase()
     .replace(/\s+/g, "")
