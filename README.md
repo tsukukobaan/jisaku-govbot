@@ -37,6 +37,8 @@ Cloudflare の無料プラン（Workers・Workers AI・Vectorize・D1）だけ�
 
 誤答は合格ラインに届いていません。5件のうち4件は指示の修正で直りましたが、300問の測り直しはまだです。採点は別のモデルによる照合で、人の確認は終わっていません。詳しくは `docs/design.md`。
 
+正答率を上げるためにやることは [docs/design.md](docs/design.md#正答率を上げるためにやること2026-11-26-時点の300問の結果から) に順番つきで書いています。
+
 ## 動かし方
 
 Node.js 22.6 以上、Python 3.11 以上、Cloudflare のアカウント（Workers Free）が要ります。
