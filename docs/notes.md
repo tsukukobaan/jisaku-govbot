@@ -49,12 +49,12 @@
 
 ## 済んだこと・次にやること
 1. ~~テスト300問~~ 済（2026-11-26）：`out/testset_answerable.jsonl`（A001〜A200）・`testset_unanswerable.jsonl`（U001〜U060）・`testset_adversarial.jsonl`（X001〜X040）。作り直しは `scripts/make_testset_*.py`。迷った例は U008・U037・U055・X010（境界の扱いを採点前に決める）
-2. ~~埋め込みと検索ヒット率~~ 済（2026-11-26）：上位5件 96.0%。Cloudflare はこのサービス専用の Free アカウント（支払い方法なし）
-3. 生成・検証パイプライン 済（`worker/src/pipeline.ts`）。300問：誤答5・正答90.5%・答えなかった99.0%・上位5件96.5%（`docs/design.md`）。指示を直して誤答4件は解消、**300問の再計測が次の一手**：
+2. ~~埋め込みと検索ヒット率~~ 済（2026-11-26）：上位5件 96.0%。Cloudflare はこのサービス専用のアカウント（2026-11-26 から Workers Paid）
+3. 生成・検証パイプライン 済（`worker/src/pipeline.ts`）。300問：誤答5・正答90.5%・答えなかった99.0%・上位5件96.5%（`docs/design.md`）。指示を直して誤答4件は解消。~~300問の再計測~~ 済（2026-11-26 `gemma4_v2`：誤答1（A015）・正答86.0%・答えなかった100%。検証が厳しくなり原文表示が 7→19）。次は `docs/design.md` の改善表 #2・#3。測り直しの手順：
    - `cd worker && npm run dev`（＝`cp .dev.vars.example .dev.vars` のあと `npm run dev`）を背景で → `.venv/Scripts/python scripts/eval_answer.py @cf/google/gemma-4-26b-a4b-it gemma4_v2 --set all --budget 9000` → `scripts/score.py gemma4_v2 --packet` → 採点の担当2本 → `scripts/score.py gemma4_v2`
-   - 1問 約25 neurons で 300問 約7,500。無料枠（1日10,000・9時 JST に戻る）の朝いちばんに流す
+   - 1問 約25 neurons で 300問 約7,500。Workers AI の無料分は1日10,000（9時 JST に戻る）。超えた分は $0.011／1,000 neurons
    - 残る型：箇条書きの FAQ で項目ごとの条件を落とす（A015）。だめなら要約をやめて引用だけ出す案
 4. 公式Govbotでの同一300問の計測
-5. ~~画面の実装と公開~~ 済（2026-11-26）：https://jisaku-govbot.yutaka-govbot.workers.dev/ （名前「自作Govbot（非公式）」・2026-11-26 決定・`worker/public/`）。出し直しは `cd worker && npx wrangler deploy`。1日 8,500 neurons を超えたら検索だけ・1日 700問まで・1 IP 20問／時・質問は D1 `ask_log` に記録（IP は日付と塩でハッシュ）
+5. ~~画面の実装と公開~~ 済（2026-11-26）：https://jisaku-govbot.yutaka-govbot.workers.dev/ （名前「自作Govbot（非公式）」・2026-11-26 決定・`worker/public/`）。出し直しは `cd worker && npx wrangler deploy`。1日 60,000 neurons を超えたら検索だけ・1日 3,000問まで（`wrangler.jsonc` の vars）・1 IP 20問／時・質問は D1 `ask_log` に記録（IP は日付と塩でハッシュ）
    - 利用条件：総務省サイトは公共データ利用規約（第1.0版）。出典の明記・加工の明記・総務省が作ったように見せない、を画面の下に書いた。ロゴ・キャラクターは対象外なので使わない
    - 残り：workers.dev のサブドメイン名を変える、Turnstile、`ask_log` を消す期限を決める
