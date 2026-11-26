@@ -1,7 +1,7 @@
 // 実行：npm test（Node 22.6 以上。型は実行時に外すだけ）
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { checkQuotes, droppedLimit, norm, overlap } from "../src/checks.ts";
+import { checkQuotes, droppedLimit, linkOnly, norm, overlap } from "../src/checks.ts";
 import { ipBucket } from "../src/limits.ts";
 
 const FAQ = "申請は、出生の日の翌日から15日以内に行ってください。\n手数料は１，０００円です（市区町村の窓口に限ります）。";
@@ -67,4 +67,11 @@ test("ipBucket：IPv4 はそのまま、IPv6 は /64 にまとめる", () => {
   assert.equal(ipBucket("2001:0db8:0012:3400::1"), "2001:db8:12:3400::/64");
   assert.equal(ipBucket("2001:db8::1"), "2001:db8:0:0::/64");
   assert.equal(ipBucket("::1"), "0:0:0:0::/64");
+});
+
+test("linkOnly：短くてリンクの案内だけの本文", () => {
+  const L = [{ label: "x", url: "https://example.go.jp/" }];
+  assert.equal(linkOnly("下記をご参照ください。\nパスポートの申請事前準備をする", L), true);
+  assert.equal(linkOnly("下記をご参照ください。", []), false); // リンクが無ければ違う
+  assert.equal(linkOnly("申請は、出生の日の翌日から15日以内に行ってください。詳しくは下記をご覧ください。手数料は無料です。窓口でも受け付けます。", L), false);
 });

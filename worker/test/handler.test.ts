@@ -24,6 +24,9 @@ class FakeD1 {
   db = new DatabaseSync(":memory:");
   constructor() {
     for (const f of readdirSync(MIGRATIONS).sort()) this.db.exec(readFileSync(new URL(f, MIGRATIONS), "utf8"));
+    const ins = this.db.prepare("INSERT INTO faq VALUES (?,?,?,?,?,?)");
+    ins.run("Q-11", "国等の相談窓口はこちら", "旅券（パスポート）", "対象業務等：旅券（パスポート）の申請\n担当：領事局旅券課", JSON.stringify([{ label: "外務省ウェブサイト", url: "https://www.mofa.go.jp/" }]), "2026-11-19");
+    ins.run("B-1", "マイナンバー", "マイナポータルでパスポートを申請するには？", "下記をご参照ください。\nパスポートの申請事前準備をする", JSON.stringify([{ label: "申請事前準備", url: "https://example.go.jp/" }]), "2026-11-19");
     this.db.prepare("INSERT INTO faq VALUES (?,?,?,?,?,?)").run("A-1", "戸籍", "出生届はいつまで？", FAQ_ANSWER, JSON.stringify([{ label: "法務省", url: "https://www.moj.go.jp/" }]), "2026-11-19");
   }
   prepare(sql: string) { return new Stmt(this.db, sql); }
@@ -31,19 +34,21 @@ class FakeD1 {
   rows(where = "1=1") { return this.db.prepare(`SELECT * FROM ask_log WHERE ${where}`).all() as any[]; }
 }
 
-function setup(opts: { gen?: unknown; ver?: unknown; aiError?: boolean; vars?: Record<string, string> } = {}) {
+type Match = { id: string; score: number };
+function setup(opts: { gen?: unknown; ver?: unknown; aiError?: boolean; vars?: Record<string, string>; matches?: Match[]; pick?: string } = {}) {
   const DB = new FakeD1();
   const calls: string[] = [];
   const AI = {
-    async run(model: string) {
+    async run(model: string, input: any) {
       calls.push(model);
+      if (String(input?.messages?.[0]?.content).startsWith("あなたは案内係")) return { response: JSON.stringify({ contact_id: opts.pick ?? "" }), usage: { prompt_tokens: 300, completion_tokens: 10 } };
       if (opts.aiError) throw new Error("secret-internal-detail");
       if (model.includes("bge-m3")) return { data: [[0.1, 0.2]] };
       const out = model.includes("llama-4-scout") ? (opts.ver ?? { ok: true, reason: "" }) : (opts.gen ?? GOOD);
       return { response: JSON.stringify(out), usage: { prompt_tokens: 1000, completion_tokens: 100 } };
     },
   };
-  const VECTORIZE = { async query() { return { matches: [{ id: "A-1", score: 0.81 }] }; } };
+  const VECTORIZE = { async query() { return { matches: opts.matches ?? [{ id: "A-1", score: 0.81 }] }; } };
   const waits: Promise<unknown>[] = [];
   const env = { DB, AI, VECTORIZE, ...opts.vars } as any;
   const ctx = { waitUntil: (p: Promise<unknown>) => void waits.push(p) } as any;
@@ -161,6 +166,7 @@ test("手元の計測（localhost ＋ LOCAL_EVAL=1）：モデルを差し替え
   const r = await t.post({ q: "出生届はいつまで？", gen: "@cf/zai-org/glm-4.7-flash" }, { url: "http://localhost:8787/api/ask" });
   assert.ok(t.calls.includes("@cf/zai-org/glm-4.7-flash"));
   for (const k of ["top_ids", "top_scores", "neurons", "question"]) assert.ok(k in r.body, k);
+  assert.equal(t.DB.rows().length, 0); // 手元の計測は本番の記録・今日の上限に数えない
   const embed = await worker.fetch(new Request("http://localhost:8787/embed", { method: "POST", body: '{"text":["a"]}' }), t.env, t.ctx);
   assert.deepEqual((await embed.json() as any).data, [[0.1, 0.2]]);
 });
@@ -219,4 +225,31 @@ test("/api/status は今日の使用率だけを返す", async () => {
   t.DB.db.prepare("INSERT INTO ask_log (question, top_ids, top_scores, mode, neurons) VALUES ('x','[]','[]','answer',250)").run();
   const r = await worker.fetch(new Request("https://bot.example/api/status"), t.env, t.ctx);
   assert.deepEqual(await r.json(), { used: 0.25 });
+});
+
+test("見つからないときは、近い窓口の案内を出す（類似度が低い窓口は出さない）", async () => {
+  const m = [{ id: "B-1", score: 0.66 }, { id: "A-1", score: 0.6 }, { id: "Q-11", score: 0.58 }];
+  const no = { answerable: false, faq_id: "", quotes: [], summary: "" };
+  const t = setup({ gen: no, matches: m, pick: "Q-11" });
+  const r = await t.post({ q: "パスポートをとりたい" });
+  assert.equal(r.body.mode, "refuse");
+  assert.equal(r.body.contact.id, "Q-11");
+  assert.equal(r.body.contact.links[0].url, "https://www.mofa.go.jp/");
+  // モデルが「合う窓口なし」と言えば出さない。候補にない ID を返しても出さない
+  for (const pick of ["", "Z-99", "A-1"]) assert.ok(!("contact" in (await setup({ gen: no, matches: m, pick }).post({ q: "パスポートをとりたい" })).body), pick);
+  // 類似度が低い窓口は候補にしない（モデルも呼ばない）
+  const far = setup({ gen: no, matches: [{ id: "B-1", score: 0.66 }, { id: "Q-11", score: 0.45 }], pick: "Q-11" });
+  assert.ok(!("contact" in (await far.post({ q: "パスポートをとりたい" })).body));
+  assert.equal(far.calls.length, 2); // 埋め込み＋生成だけ
+  // 答えられたときは出さない
+  const ok = setup({ matches: [{ id: "A-1", score: 0.81 }, { id: "Q-11", score: 0.7 }] });
+  assert.ok(!("contact" in (await ok.post({ q: "出生届はいつまで？" })).body));
+});
+
+test("リンクだけの FAQ を選んだら、要約を作らず原文とリンクを出す", async () => {
+  const t = setup({ gen: { answerable: true, faq_id: "B-1", quotes: ["下記をご参照ください。"], summary: "パスポートの申請事前準備をしてください。" }, matches: [{ id: "B-1", score: 0.7 }] });
+  const r = await t.post({ q: "マイナポータルでパスポート申請" });
+  assert.equal(r.body.mode, "faq_only");
+  assert.equal(r.body.faq.id, "B-1");
+  assert.ok(!t.calls.some((c) => c.includes("llama-4-scout"))); // 検証も呼ばない
 });

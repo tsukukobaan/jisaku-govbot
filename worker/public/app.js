@@ -22,6 +22,15 @@ function related(cands) {
   if (!cands?.length) return "";
   return `<p class="muted rel-head">近いかもしれない FAQ：</p><ul class="rel">${cands.map((c) => `<li><button type="button" data-q="${esc(c.question)}">${esc(c.question)}</button></li>`).join("")}</ul>`;
 }
+// 「見つからない」ときの窓口の案内（パスポート→外務省の案内など）。リンクは FAQ のデータから出す
+function contact(c) {
+  if (!c) return "";
+  const links = (c.links || []).filter((l) => /^https?:\/\//.test(l.url));
+  return `<div class="contact"><p class="contact-head">関係しそうな窓口：<b>${esc(c.question)}</b></p>
+    <div class="full">${esc(c.answer)}</div>
+    ${links.length ? `<ul class="links">${links.map((l) => `<li><a href="${esc(l.url)}" target="_blank" rel="noopener noreferrer">${esc(l.label || l.url)}</a></li>`).join("")}</ul>` : ""}
+    <p class="muted">${esc(c.area)}・${esc(c.as_of)} 時点</p></div>`;
+}
 function bubble(cls, html) {
   $("#empty")?.remove();
   const el = document.createElement("div");
@@ -57,6 +66,8 @@ function render(r, d) {
     return `<span class="tag warn">いまは検索だけ</span>` + (d.candidates || []).slice(0, 3).map((c) => `<blockquote><b>${esc(c.question)}</b>
 ${esc(c.answer)}</blockquote>`).join("");
   if (d.mode === "unavailable") return `<p>いまは利用上限に達しています。時間をおいてお試しください。</p>`;
+  if (d.contact)
+    return `<p>この質問に直接答えている FAQ は見つかりませんでした。下の窓口の案内をご覧ください。</p>` + contact(d.contact) + related((d.candidates || []).filter((c) => c.id !== d.contact.id));
   return `<p>この質問に答えている FAQ は見つかりませんでした。お住まいの市区町村や担当の窓口にお問い合わせください。</p>` + related(d.candidates);
 }
 

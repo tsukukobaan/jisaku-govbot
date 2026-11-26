@@ -29,7 +29,8 @@ function publicView(out: AskResult) {
   const { mode, faq } = out;
   // 「見つからない」で遠い FAQ を並べると、関係のない話（ラーメン→食品廃棄物など）が出るので出さない
   const candidates = mode === "refuse" && !((out.top_scores[0] ?? 0) >= RELATED_SCORE) ? [] : out.candidates;
-  return mode === "answer" ? { mode, candidates, faq, quotes: out.quotes, summary: out.summary } : { mode, candidates, faq };
+  if (mode === "answer") return { mode, candidates, faq, quotes: out.quotes, summary: out.summary };
+  return mode === "refuse" && out.contact ? { mode, candidates, faq, contact: out.contact } : { mode, candidates, faq };
 }
 
 const unavailable = (q: string, reason: string): AskResult => ({ question: q, top_ids: [], top_scores: [], candidates: [], mode: "unavailable", reason, neurons: 0 });
@@ -49,20 +50,23 @@ async function handleAsk(req: Request, env: Env, ctx: ExecutionContext, url: URL
   const gen = local && typeof b.gen === "string" && b.gen ? b.gen : DEFAULT_GEN; // モデルの差し替えは手元の計測だけ
   const ver = local && typeof b.ver === "string" && b.ver ? b.ver : DEFAULT_VER;
 
+  // 手元の計測は本番の D1 に記録しない（記録すると、公開画面の今日の利用と上限に数えられる）。使い回しもしない
+  if (local) return json(await ask(env, q, gen, ver));
+
   const slot = await reserve(env.DB, q, gen, await ipHash(req, env.IP_SALT));
-  if (!local && slot.ipLastHour > PER_IP_HOUR) {
+  if (slot.ipLastHour > PER_IP_HOUR) {
     await release(env.DB, slot.id);
     return fail(429, "質問が多すぎます。1時間ほどおいてからお試しください。");
   }
 
   const limit = dailyLimits(env);
   // 上限の 8 割・10 割に来たら LINE で知らせる（種類ごとに1日1回）
-  if (!local) ctx.waitUntil(notifyLimits(env, { neurons: slot.neuronsToday, asks: slot.asksToday }, limit).catch((e) => console.error(e)));
-  const useCache = !local && gen === DEFAULT_GEN && ver === DEFAULT_VER; // 手元の計測は使い回さない（直しの効きを測るため）
+  ctx.waitUntil(notifyLimits(env, { neurons: slot.neuronsToday, asks: slot.asksToday }, limit).catch((e) => console.error(e)));
+  const useCache = gen === DEFAULT_GEN && ver === DEFAULT_VER;
   let out: AskResult | null = useCache ? await getCached(env.DB, q) : null;
   if (out) {
     // 使い回し：AI も検索も呼ばないので、1日の上限には数えない
-  } else if (!local && slot.asksToday > limit.asks) {
+  } else if (slot.asksToday > limit.asks) {
     out = unavailable(q, "今日の質問数の上限に達した");
   } else {
     try {
@@ -74,7 +78,7 @@ async function handleAsk(req: Request, env: Env, ctx: ExecutionContext, url: URL
     }
   }
   ctx.waitUntil(record(env.DB, slot.id, out));
-  return json(local ? out : publicView(out));
+  return json(publicView(out));
 }
 
 /** 今日（UTC）の使用率。画面の下に小さく出す（数そのものは出さず、割合だけ）。 */

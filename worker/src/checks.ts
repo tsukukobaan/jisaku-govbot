@@ -28,6 +28,14 @@ export function checkQuotes(answerPlain: string, quotes: string[], summary: stri
   return null;
 }
 
+/**
+ * 本文がリンクの案内だけの FAQ（「下記をご参照ください」＋リンクなど）。要約しても中身が無いので、原文とリンクをそのまま出す。
+ */
+export function linkOnly(answerPlain: string, links: unknown[]): boolean {
+  const s = norm(answerPlain);
+  return links.length > 0 && s.length < 60 && /下記|以下|こちら|ご参照|ご覧/.test(s);
+}
+
 // 対象を絞る語。引用にあるのに要約に無ければ、条件を落として対象を広げたとみなす（A015 の型）。
 // 「場合」は多すぎるので見ない（docs/design.md）。
 const LIMITS: string[][] = [["のみ"], ["限る", "限り", "限ら", "限定"], ["除く", "除き", "除いて", "除外"], ["以外"], ["ただし", "但し"]];

@@ -74,3 +74,7 @@ header h1 img { width: 32px; height: 32px; border-radius: 50%; }
 /* 今日の AI 利用の割合（下に小さく。尽きたら赤） */
 .usage { color: #949497; }
 .usage.out { color: #ec0000; font-weight: 700; }
+.contact { background: #fff; border: 1px solid var(--line); border-left: 4px solid var(--blue); border-radius: 0 8px 8px 0; padding: 10px 14px; margin: 10px 0; font-size: 14px; }
+.contact-head { margin: 0; }
+.contact .full { margin-top: 6px; }
+.contact .muted { font-size: 12px; margin: 6px 0 0; }
