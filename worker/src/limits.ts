@@ -88,7 +88,7 @@ export function release(db: D1Database, id: number) {
 
 /** 先に書いた行を、結果で書き換える。 */
 export function record(db: D1Database, id: number, out: AskResult) {
-  const detail = JSON.stringify({ reason: out.reason, quotes: out.quotes, summary: out.summary, faq: out.faq?.id });
+  const detail = JSON.stringify({ reason: out.reason, quotes: out.quotes, summary: out.summary, faq: out.faq?.id, kind: out.kind, contact: out.contact?.id });
   return db
     .prepare("UPDATE ask_log SET top_ids = ?, top_scores = ?, mode = ?, neurons = ?, detail = ? WHERE id = ?")
     .bind(JSON.stringify(out.top_ids), JSON.stringify(out.top_scores), out.mode, out.neurons, detail, id)

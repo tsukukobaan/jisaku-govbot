@@ -3,7 +3,7 @@
 
 import { checkQuotes, droppedLimit, linkOnly, overlap } from "./checks.ts";
 import { CONTACT_AREA, CONTACT_SCORE, DEFAULT_GEN, DEFAULT_VER, EMBED, MIN_SCORE, SEARCH_K, SKIP_VERIFY_OVERLAP, TOP_K, neurons, type Usage } from "./config.ts";
-import { CONTACT_SCHEMA, CONTACT_SYSTEM, GEN_SCHEMA, GEN_SYSTEM, VER_SCHEMA, VER_SYSTEM } from "./prompts.ts";
+import { CONTACT_SCHEMA, CONTACT_SYSTEM, GEN_SCHEMA, GEN_SYSTEM, KINDS, VER_SCHEMA, VER_SYSTEM, type Kind } from "./prompts.ts";
 
 type FaqRow = { id: string; area: string; question: string; answer_plain: string; links: string; as_of: string };
 export type Link = { label: string; url: string };
@@ -17,6 +17,7 @@ export type AskResult = {
   candidates: PublicFaq[]; // 上位3件
   contact?: PublicFaq; // 「見つからない」ときに出す、いちばん近い窓口の案内
   contact_score?: number; // その類似度（記録と手元の計測用）
+  kind?: Kind; // 「見つからない」ときの質問の種類（市区町村ごとに違う・行政の外など。断り方を変える）
   mode: Mode;
   reason?: string; // answer 以外になった理由（記録と手元の計測用。公開の応答には出さない）
   faq?: PublicFaq;
@@ -78,17 +79,19 @@ export async function ask(env: Env, q: string, gen = DEFAULT_GEN, ver = DEFAULT_
   const contacts = res.matches.filter((m) => m.score >= CONTACT_SCORE && byId.get(m.id)?.area === CONTACT_AREA).slice(0, 3);
   const base = { question: q, top_ids: ids, top_scores: scores, candidates: cands.slice(0, 3).map(toPublic) };
   const done = (mode: Mode, rest: Partial<AskResult> = {}): AskResult => ({ ...base, mode, ...rest, neurons: spent });
-  // 「答えられない」ときだけ、窓口の案内を選ぶ
+  // 「答えられない」ときだけ、質問の種類を決め、窓口の案内を選ぶ（1回の呼び出しで両方）
   const refuse = async (reason: string): Promise<AskResult> => {
-    if (!contacts.length) return done("refuse", { reason });
     const list = contacts.map((m) => byId.get(m.id)!).map((f) => `[ID] ${f.id}\n[窓口] ${f.question}\n[内容] ${f.answer_plain}`).join("\n\n");
-    const c = await runJson(env, gen, CONTACT_SYSTEM, `質問：${q}\n\n窓口：\n${list}`, CONTACT_SCHEMA);
+    const c = await runJson(env, gen, CONTACT_SYSTEM, `質問：${q}\n\n窓口：\n${list || "なし"}`, CONTACT_SCHEMA);
     spent += neurons(gen, c.usage);
     const m = contacts.find((x) => x.id === c.data?.contact_id);
-    return done("refuse", { reason, ...(m ? { contact: toPublic(byId.get(m.id)!), contact_score: Math.round(m.score * 1000) / 1000 } : {}) });
+    const kind: Kind = KINDS.includes(c.data?.kind) ? c.data.kind : "unknown";
+    return done("refuse", { reason, kind, ...(m ? { contact: toPublic(byId.get(m.id)!), contact_score: Math.round(m.score * 1000) / 1000 } : {}) });
   };
 
-  if (!cands.length || scores[0] < MIN_SCORE) return done("refuse", { reason: "検索の類似度が低い" });
+  const far = !cands.length || scores[0] < MIN_SCORE;
+  if (far && searchOnly) return done("refuse", { reason: "検索の類似度が低い" }); // 上限を超えた日は種類の判定もしない
+  if (far) return refuse("検索の類似度が低い");
   if (searchOnly) return done("search_only", { reason: "今日の生成の上限に達した" });
 
   // 生成：答えられるか・どの FAQ・引用・要約1文

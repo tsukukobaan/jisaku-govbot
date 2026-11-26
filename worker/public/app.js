@@ -66,9 +66,14 @@ function render(r, d) {
     return `<span class="tag warn">いまは検索だけ</span>` + (d.candidates || []).slice(0, 3).map((c) => `<blockquote><b>${esc(c.question)}</b>
 ${esc(c.answer)}</blockquote>`).join("");
   if (d.mode === "unavailable") return `<p>いまは利用上限に達しています。時間をおいてお試しください。</p>`;
+  // 質問の種類で断り方を変える（市区町村ごとに違う・行政の外）
+  const why = {
+    local: "この質問は、お住まいの市区町村（または都道府県）によって扱いが違うため、国の FAQ には載っていません。お住まいの市区町村のウェブサイトか窓口でご確認ください。",
+    outside: "この質問は行政の手続きについてではないため、行政の FAQ では答えられません。",
+  }[d.kind];
   if (d.contact)
-    return `<p>この質問に直接答えている FAQ は見つかりませんでした。下の窓口の案内をご覧ください。</p>` + contact(d.contact) + related((d.candidates || []).filter((c) => c.id !== d.contact.id));
-  return `<p>この質問に答えている FAQ は見つかりませんでした。お住まいの市区町村や担当の窓口にお問い合わせください。</p>` + related(d.candidates);
+    return `<p>${why ? esc(why) : "この質問に直接答えている FAQ は見つかりませんでした。"}下の窓口の案内もご覧ください。</p>` + contact(d.contact) + related((d.candidates || []).filter((c) => c.id !== d.contact.id));
+  return `<p>${why ? esc(why) : "この質問に答えている FAQ は見つかりませんでした。お住まいの市区町村や担当の窓口にお問い合わせください。"}</p>` + (d.kind === "outside" ? "" : related(d.candidates));
 }
 
 async function run() {
