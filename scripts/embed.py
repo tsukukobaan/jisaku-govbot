@@ -1,7 +1,7 @@
 """FAQ とテスト質問を bge-m3 で埋め込み、out/emb_*.npy に保存する。
 
 前提：worker/ で `cp .dev.vars.example .dev.vars` のあと `npm run dev` が動いている（/embed が Workers AI を呼ぶ）。
-使い方：.venv/Scripts/python scripts/embed.py
+使い方：.venv/Scripts/python scripts/embed.py（out/faq_nta.jsonl があれば out/emb_nta.npy も作る）
 """
 import json, sys, time, urllib.request
 from pathlib import Path
@@ -46,3 +46,6 @@ faq = [(r["id"], r["embed_text"]) for r in load("faq_clean.jsonl") if r["id"] no
 tests = [(r["qid"], r["user_question"]) for p in ("testset_answerable.jsonl", "testset_unanswerable.jsonl", "testset_adversarial.jsonl") for r in load(p)]
 run("test", tests)
 run("faq", faq)
+# 足した出典（scripts/build_nta.py など）。あれば別のファイルに作る（今ある索引に足すだけで済むように）
+if (OUT / "faq_nta.jsonl").exists():
+    run("nta", [(r["id"], r["embed_text"]) for r in load("faq_nta.jsonl")])

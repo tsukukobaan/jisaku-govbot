@@ -29,7 +29,7 @@ tests = {"pilot": pilot, "sample": pilot + U[::6] + X[::4], "all": A + U + X}[a.
 if a.qids:
     want = a.qids.split(","); allt = {t["qid"]: t for t in A + U + X}; tests = [allt[q] for q in want]
 alias = {}
-for r in load("faq_clean.jsonl"):
+for r in [x for f in ("faq_clean.jsonl", "faq_nta.jsonl") if (OUT / f).exists() for x in load(f)]:
     for i in [r["id"]] + r["alias_ids"]:
         alias[i] = r["id"]
 

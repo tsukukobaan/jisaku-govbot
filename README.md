@@ -1,6 +1,6 @@
 # 自作Govbot（非公式）
 
-総務省が公開している「Govbot FAQ データ」（4,412件）を検索し、FAQ の原文を引用して答えるチャットボットです。個人が作った**非公式**のもので、総務省・デジタル庁とは関係ありません。
+総務省が公開している「Govbot FAQ データ」（4,412件）と、国税庁「タックスアンサー」（よくある税の質問）を検索し、FAQ の原文を引用して答えるチャットボットです。個人が作った**非公式**のもので、総務省・国税庁・デジタル庁とは関係ありません。
 
 - 公開先：https://jisaku-govbot.yutaka-govbot.workers.dev/
 - 答えは FAQ の引用と、その要約1文だけ。FAQ にないことには答えません
@@ -66,6 +66,11 @@ npm run dev                                   # 別の端末で
 ../.venv/Scripts/python ../scripts/embed.py && ../.venv/Scripts/python ../scripts/export_index.py
 npx wrangler d1 execute faq-db --remote --file=../out/emb_faq_seed.sql
 npx wrangler vectorize insert faq-bge-m3 --file=../out/emb_vectors.ndjson
+# 国税庁タックスアンサーを足す（約750ページを1秒に1ページずつ取る。raw/nta/ に保存）
+../.venv/Scripts/python ../scripts/fetch_nta.py && ../.venv/Scripts/python ../scripts/build_nta.py
+../.venv/Scripts/python ../scripts/embed.py && ../.venv/Scripts/python ../scripts/export_index.py ../out nta
+npx wrangler d1 execute faq-db --remote --file=../out/emb_nta_faq_seed.sql
+npx wrangler vectorize insert faq-bge-m3 --file=../out/emb_nta_vectors.ndjson
 npx wrangler secret put IP_SALT               # 任意：IP のハッシュに混ぜる塩
 npx wrangler deploy
 ```
@@ -77,10 +82,13 @@ npx wrangler deploy
 - 出典：総務省「Govbot FAQ データ」（令和8年11月19日時点）https://www.soumu.go.jp/main_content/001102261.xlsx
 - `raw/faq.xlsx` は取得したままのファイル。`out/faq_clean.jsonl` などは**加工したもの**です（空行の除去、同じ問い・回答の統合、回答文中のリンクの分解）。`out/testset_*.jsonl` の質問文と `out/answers_*`・`out/grades_*` は、このリポジトリで作ったものです
 - 総務省ウェブサイトの利用規約（公共データ利用規約 第1.0版）に従って使っています。再利用するときは、出典と加工したことを書き、総務省が作ったものと誤解される見せ方をしないでください
+- 出典：国税庁「タックスアンサー（よくある税の質問）」（令和8年4月1日現在の法令等）https://www.nta.go.jp/taxes/shiraberu/taxanswer/index2.htm 。国税庁ホームページの利用規約（https://www.nta.go.jp/chuijiko/copy.htm 、公共データ利用規約 第1.0版に準拠）に従って使っています。`out/faq_nta.jsonl` は**加工したもの**です（1ページを見出しごとに分け、根拠法令・関連リンク・問い合わせ先を除いたもの）。取得したままのページ（`raw/nta/`）はリポジトリに入れていません（`scripts/fetch_nta.py` で取り直せます）
+- 画面では、答えに使った FAQ ごとに出典（総務省または国税庁）と「加工」を表示しています
+- ほかに足せる出典の調査は `docs/sources.md`
 - 名前とキャラクターは独自のものです。公式のロゴ・キャラクター・画面は使っていません
 
 ## ライセンス
 
 - コード：[MIT](LICENSE)
-- FAQ データ（`raw/`・`out/`）：上の利用条件（総務省の公共データ利用規約）に従います
+- FAQ データ（`raw/`・`out/`）：上の利用条件（総務省・国税庁の公共データ利用規約）に従います
 - キャラクターと画像（`assets/`・`worker/public/` の画像）：コードと同じく [MIT](LICENSE)
