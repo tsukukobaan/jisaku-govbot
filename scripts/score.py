@@ -17,7 +17,7 @@ load = lambda p: [json.loads(l) for l in (OUT / p).read_text(encoding="utf-8").s
 name = sys.argv[1]
 rows = load(f"answers_{name}.jsonl")
 tests = {r["qid"]: r for p in ("testset_answerable.jsonl", "testset_unanswerable.jsonl", "testset_adversarial.jsonl") for r in load(p)}
-faq = {r["id"]: r for r in load("faq_clean.jsonl")}
+faq = {r["id"]: r for f in ("faq_clean.jsonl", "faq_nta.jsonl") if (OUT / f).exists() for r in load(f)}  # 足した出典も引く
 alias = {i: r["id"] for r in faq.values() for i in [r["id"]] + r["alias_ids"]}
 
 if "--packet" in sys.argv:

@@ -12,9 +12,14 @@ $("#log").addEventListener("click", (ev) => {
   else if (t.dataset?.q) { $("#q").value = t.dataset.q.replace(/\s+/g, " "); run(); }
 });
 
+// FAQ ごとの出典（ID の頭で分ける）。どれも「加工して作成」で、各省庁が作ったように見せない
+function origin(f) {
+  if (String(f.id).startsWith("NTA-")) return `出典：国税庁「タックスアンサー」（${esc(f.as_of)} 現在の法令等）を加工`;
+  return `出典：総務省「Govbot FAQ データ」（${esc(f.as_of)} 時点）を加工`;
+}
 function source(f) {
   const links = (f.links || []).filter((l) => /^https?:\/\//.test(l.url));
-  return `<div class="src">引用元：<b>${esc(f.question)}</b>（${esc(f.area)}・${esc(f.as_of)} 時点）
+  return `<div class="src">引用元：<b>${esc(f.question)}</b>（${esc(f.area)}）<br>${origin(f)}
     ${links.length ? `<ul class="links">${links.map((l) => `<li><a href="${esc(l.url)}" target="_blank" rel="noopener noreferrer">${esc(l.label || l.url)}</a></li>`).join("")}</ul>` : ""}
     <details><summary>FAQ の回答を全部見る</summary><div class="full">${esc(f.answer)}</div></details></div>`;
 }
@@ -29,7 +34,7 @@ function contact(c) {
   return `<div class="contact"><p class="contact-head">関係しそうな窓口：<b>${esc(c.question)}</b></p>
     <div class="full">${esc(c.answer)}</div>
     ${links.length ? `<ul class="links">${links.map((l) => `<li><a href="${esc(l.url)}" target="_blank" rel="noopener noreferrer">${esc(l.label || l.url)}</a></li>`).join("")}</ul>` : ""}
-    <p class="muted">${esc(c.area)}・${esc(c.as_of)} 時点</p></div>`;
+    <p class="muted">${esc(c.area)}・${origin(c)}</p></div>`;
 }
 function bubble(cls, html) {
   $("#empty")?.remove();

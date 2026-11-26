@@ -12,9 +12,13 @@ sys.stdout.reconfigure(encoding="utf-8")
 OUT = Path(__file__).resolve().parent.parent / "out"
 load = lambda p: [json.loads(l) for l in (OUT / p).read_text(encoding="utf-8").splitlines() if l.strip()]
 
-faq = {r["id"]: r for r in load("faq_clean.jsonl")}
+faq = {r["id"]: r for f in ("faq_clean.jsonl", "faq_nta.jsonl") if (OUT / f).exists() for r in load(f)}  # 足した出典も引く
 fid = json.loads((OUT / "emb_faq_ids.json").read_text(encoding="utf-8"))
-F = np.load(OUT / "emb_faq.npy"); F /= np.linalg.norm(F, axis=1, keepdims=True)
+F = np.load(OUT / "emb_faq.npy")
+if (OUT / "emb_nta.npy").exists():  # 足した出典も同じ索引にあるものとして測る
+    fid += json.loads((OUT / "emb_nta_ids.json").read_text(encoding="utf-8"))
+    F = np.vstack([F, np.load(OUT / "emb_nta.npy")])
+F /= np.linalg.norm(F, axis=1, keepdims=True)
 tid = json.loads((OUT / "emb_test_ids.json").read_text(encoding="utf-8"))
 T = np.load(OUT / "emb_test.npy"); T /= np.linalg.norm(T, axis=1, keepdims=True)
 tix = {q: i for i, q in enumerate(tid)}
