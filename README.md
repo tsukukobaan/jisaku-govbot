@@ -83,4 +83,4 @@ npx wrangler deploy
 
 - コード：[MIT](LICENSE)
 - FAQ データ（`raw/`・`out/`）：上の利用条件（総務省の公共データ利用規約）に従います
-- キャラクターと画像（`assets/`・`worker/public/` の画像）：MIT の対象外です。無断での利用はご遠慮ください
+- キャラクターと画像（`assets/`・`worker/public/` の画像）：コードと同じく [MIT](LICENSE)
